@@ -22,8 +22,10 @@ ARG NPM_CONFIG_REGISTRY=
 # it on the native host arch instead of under QEMU emulation for the target.
 FROM --platform=${BUILDPLATFORM} ${NODE_IMAGE} AS frontend-builder
 ARG NPM_CONFIG_REGISTRY
+ARG FRONTEND_NODE_OPTIONS=--max-old-space-size=4096
 
 WORKDIR /app/frontend
+ENV NODE_OPTIONS=${FRONTEND_NODE_OPTIONS}
 
 # Install pnpm (pinned to v9 to match CI and keep builds reproducible)
 RUN corepack enable && corepack prepare pnpm@9 --activate
