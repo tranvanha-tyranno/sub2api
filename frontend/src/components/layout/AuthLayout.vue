@@ -26,6 +26,7 @@
 
     <!-- Content Container -->
     <div class="relative z-10 w-full max-w-md">
+      <router-link v-if="shopRedirect" to="/shop" class="mb-6 inline-flex text-sm font-semibold text-primary-700 hover:underline dark:text-primary-400">← Trở lại cửa hàng</router-link>
       <!-- Logo/Brand -->
       <div class="mb-8 text-center">
         <!-- Custom Logo or Default Logo -->
@@ -39,7 +40,7 @@
             {{ siteName }}
           </h1>
           <p class="text-sm text-gray-500 dark:text-dark-400">
-            {{ siteSubtitle }}
+            {{ shopRedirect ? 'Tài khoản để quản lý API và mức sử dụng' : siteSubtitle }}
           </p>
         </template>
       </div>
@@ -64,10 +65,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useAppStore } from '@/stores'
 import { sanitizeUrl } from '@/utils/url'
 
 const appStore = useAppStore()
+const route = useRoute()
+const shopRedirect = computed(() => typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/shop'))
 
 const siteName = computed(() => appStore.siteName || 'Sub2API')
 const siteLogo = computed(() => sanitizeUrl(appStore.siteLogo || '', { allowRelative: true, allowDataUrl: true }))

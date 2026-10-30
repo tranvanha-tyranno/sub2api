@@ -5063,7 +5063,7 @@ const expiresAtInput = computed({
 const canExchangeCode = computed(() => {
   const authCode = oauthFlowRef.value?.authCode || ''
   if (form.platform === 'openai') {
-    return authCode.trim() && openaiOAuth.sessionId.value && !openaiOAuth.loading.value
+    return authCode.trim() && !/^\d{6}$/.test(authCode.trim()) && openaiOAuth.sessionId.value && !openaiOAuth.loading.value
   }
   if (form.platform === 'gemini') {
     return authCode.trim() && geminiOAuth.sessionId.value && !geminiOAuth.loading.value
@@ -6634,7 +6634,7 @@ const handleGrokAuthorizePassword = async (emailPasswordInput: string) => {
 // OpenAI OAuth 授权码兑换
 const handleOpenAIExchange = async (authCode: string) => {
   const oauthClient = openaiOAuth
-  if (!authCode.trim() || !oauthClient.sessionId.value) return
+  if (!authCode.trim() || /^\d{6}$/.test(authCode.trim()) || !oauthClient.sessionId.value) return
 
   oauthClient.loading.value = true
   oauthClient.error.value = ''

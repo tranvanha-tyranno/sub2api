@@ -27,7 +27,7 @@
       </div>
 
       <!-- Registration Form -->
-      <form v-else @submit.prevent="handleRegister" class="space-y-5">
+      <form v-if="registrationEnabled || !settingsLoaded || shopSignup" @submit.prevent="handleRegister" class="space-y-5">
         <!-- Email Input -->
         <div>
           <label for="email" class="input-label">
@@ -269,7 +269,7 @@
         <!-- Submit Button -->
         <button
           type="submit"
-          :disabled="registrationActionDisabled || (turnstileEnabled && !turnstileToken)"
+          :disabled="registrationActionDisabled || !registrationEnabled || (turnstileEnabled && !turnstileToken)"
           class="btn btn-primary w-full"
         >
           <svg
@@ -354,7 +354,7 @@
       <p class="text-gray-500 dark:text-dark-400">
         {{ t('auth.alreadyHaveAccount') }}
         <router-link
-          to="/login"
+          :to="{ path: '/login', query: route.query.redirect ? { redirect: route.query.redirect } : {} }"
           class="font-medium text-primary-600 transition-colors hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
         >
           {{ t('auth.signIn') }}
@@ -407,6 +407,7 @@ const LOGIN_AGREEMENT_STORAGE_KEY = 'sub2api_login_agreement_consent'
 
 const router = useRouter()
 const route = useRoute()
+const shopSignup = computed(() => typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/shop'))
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
@@ -994,6 +995,7 @@ function validateForm(): boolean {
 // ==================== Form Handlers ====================
 
 async function handleRegister(): Promise<void> {
+  if (!registrationEnabled.value) return
   // Clear previous error
   errorMessage.value = ''
 
@@ -1066,12 +1068,15 @@ async function handleRegister(): Promise<void> {
           tencent_captcha_randstr: tencentCaptchaEnabled.value ? tencentCaptchaRandstr.value : undefined,
           promo_code: formData.promo_code || undefined,
           invitation_code: formData.invitation_code || undefined,
+          pending_redirect: typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/shop') ? route.query.redirect : undefined,
           ...(affCode ? { aff_code: affCode } : {})
         })
       )
 
       // Navigate to email verification page
-      await router.push('/email-verify')
+      await router.push(route.query.redirect
+        ? { path: '/email-verify', query: { redirect: route.query.redirect } }
+        : '/email-verify')
       return
     }
 
@@ -1092,8 +1097,10 @@ async function handleRegister(): Promise<void> {
     // Show success toast
     appStore.showSuccess(t('auth.accountCreatedSuccess', { siteName: siteName.value }))
 
-    // Redirect to dashboard
-    await router.push('/dashboard')
+    const redirect = typeof route.query.redirect === 'string' && route.query.redirect.startsWith('/') && !route.query.redirect.startsWith('//')
+      ? route.query.redirect
+      : '/shop'
+    await router.push(redirect)
   } catch (error: unknown) {
     // Handle registration error
     errorMessage.value = buildRegistrationErrorMessage(error, t('auth.registrationFailed'))

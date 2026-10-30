@@ -1,19 +1,20 @@
 import { createI18n } from 'vue-i18n'
 
-type LocaleCode = 'en' | 'zh'
+type LocaleCode = 'en' | 'zh' | 'vi'
 
 type LocaleMessages = Record<string, any>
 
 const LOCALE_KEY = 'sub2api_locale'
-const DEFAULT_LOCALE: LocaleCode = 'en'
+const DEFAULT_LOCALE: LocaleCode = 'vi'
 
 const localeLoaders: Record<LocaleCode, () => Promise<{ default: LocaleMessages }>> = {
   en: () => import('./locales/en'),
-  zh: () => import('./locales/zh')
+  zh: () => import('./locales/zh'),
+  vi: () => import('./locales/vi')
 }
 
 function isLocaleCode(value: string): value is LocaleCode {
-  return value === 'en' || value === 'zh'
+  return value === 'en' || value === 'zh' || value === 'vi'
 }
 
 function getDefaultLocale(): LocaleCode {
@@ -92,6 +93,7 @@ export function getLocale(): LocaleCode {
 }
 
 export const availableLocales = [
+  { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' },
   { code: 'en', name: 'English', flag: '🇺🇸' },
   { code: 'zh', name: '中文', flag: '🇨🇳' }
 ] as const

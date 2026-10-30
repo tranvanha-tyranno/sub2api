@@ -14,6 +14,7 @@ const {
   showWarningMock,
   importCodexSessionMock,
   createOpenAICodexPATMock,
+  generateAuthUrlMock,
   authIsSimpleMode,
 } = vi.hoisted(() => ({
   createAccountMock: vi.fn(),
@@ -22,6 +23,7 @@ const {
   showWarningMock: vi.fn(),
   importCodexSessionMock: vi.fn(),
   createOpenAICodexPATMock: vi.fn(),
+  generateAuthUrlMock: vi.fn(),
   authIsSimpleMode: { value: true },
 }))
 
@@ -50,6 +52,7 @@ vi.mock('@/api/admin', () => ({
       checkMixedChannelRisk: vi.fn().mockResolvedValue({ has_risk: false }),
       importCodexSession: importCodexSessionMock,
       createOpenAICodexPAT: createOpenAICodexPATMock,
+      generateAuthUrl: generateAuthUrlMock,
     },
     settings: {
       getWebSearchEmulationConfig: vi.fn().mockResolvedValue({ enabled: false, providers: [] }),
@@ -90,8 +93,8 @@ const OAuthAuthorizationFlowStub = defineComponent({
     showCodexPatOption: Boolean,
     initialInputMethod: String,
   },
-  data: () => ({ inputMethod: 'manual' }),
-  emits: ['import-codex-session', 'import-codex-pat'],
+  data: () => ({ inputMethod: 'manual', authCode: '' }),
+  emits: ['generate-url', 'import-codex-session', 'import-codex-pat'],
   template: `
     <div>
       <button data-testid="import-codex-session" @click="$emit('import-codex-session', 'session-json')">session</button>
@@ -203,6 +206,10 @@ describe('CreateAccountModal OpenAI long-context billing', () => {
   beforeEach(() => {
     authIsSimpleMode.value = true
     createAccountMock.mockReset().mockResolvedValue({ id: 42, platform: 'openai', type: 'apikey' })
+    generateAuthUrlMock.mockReset().mockResolvedValue({
+      auth_url: 'https://auth.openai.com/oauth/authorize?state=test-state',
+      session_id: 'test-session',
+    })
     probeUpstreamBillingMock.mockReset().mockResolvedValue({})
     syncUpstreamModelsMock.mockReset().mockResolvedValue({ models: [], metadata: {} })
     showWarningMock.mockReset()
@@ -782,6 +789,26 @@ describe('CreateAccountModal OpenAI long-context billing', () => {
     expect(flow.props('showAgentIdentityOption')).toBe(true)
     expect(flow.props('showCodexPatOption')).toBe(true)
     expect(flow.props('initialInputMethod')).toBe('manual')
+  })
+
+  it('does not exchange a six-digit 2FA code as an OpenAI authorization code', async () => {
+    const wrapper = mountModal()
+    await selectButtonByText(wrapper, 'OpenAI')
+    await wrapper.get('form#create-account-form input[type="text"]').setValue('OpenAI account')
+    await wrapper.get('form#create-account-form').trigger('submit.prevent')
+
+    const flow = wrapper.getComponent(OAuthAuthorizationFlowStub)
+    flow.vm.$emit('generate-url')
+    await flushPromises()
+
+    flow.vm.authCode = '123456'
+    await flushPromises()
+    const completeButton = wrapper.findAll('button').find(button => button.text().includes('admin.accounts.oauth.completeAuth'))
+    expect(completeButton?.attributes('disabled')).toBeDefined()
+
+    flow.vm.authCode = 'authorization-code-from-callback'
+    await flushPromises()
+    expect(completeButton?.attributes('disabled')).toBeUndefined()
   })
 
   it.each([

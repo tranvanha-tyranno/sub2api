@@ -81,7 +81,7 @@ function simulateGuard(
       if (authState.backendModeEnabled && !authState.isAdmin) {
         return null
       }
-      return authState.isAdmin ? '/admin/dashboard' : '/dashboard'
+      return authState.isAdmin ? '/admin/dashboard' : '/shop'
     }
     if (authState.backendModeEnabled && !authState.isAuthenticated) {
       const allowed = ['/login', '/key-usage', '/setup', '/payment/result']
@@ -203,12 +203,12 @@ describe('路由守卫逻辑', () => {
 
     it('访问 /login 重定向到 /dashboard', () => {
       const redirect = simulateGuard('/login', { requiresAuth: false }, authState)
-      expect(redirect).toBe('/dashboard')
+      expect(redirect).toBe('/shop')
     })
 
     it('访问 /register 重定向到 /dashboard', () => {
       const redirect = simulateGuard('/register', { requiresAuth: false }, authState)
-      expect(redirect).toBe('/dashboard')
+      expect(redirect).toBe('/shop')
     })
 
     it('访问 /dashboard 允许通过', () => {

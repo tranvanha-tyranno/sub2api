@@ -767,6 +767,17 @@
                       />
                     </button>
                   </div>
+                  <a
+                    v-if="platform === 'openai'"
+                    :href="authUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-primary inline-flex items-center gap-2 text-sm"
+                    data-testid="openai-open-auth-url"
+                  >
+                    <Icon name="externalLink" size="sm" />
+                    {{ t('admin.accounts.oauth.openai.openAuthUrl') }}
+                  </a>
                   <button
                     type="button"
                     class="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
@@ -796,6 +807,9 @@
                 </p>
                 <p class="text-sm text-blue-700 dark:text-blue-300">
                   {{ oauthOpenUrlDesc }}
+                </p>
+                <p v-if="platform === 'openai'" class="mt-2 text-sm text-blue-800 dark:text-blue-200">
+                  {{ t('admin.accounts.oauth.openai.twoFactorHint') }}
                 </p>
                 <!-- Local callback notice -->
                 <div
@@ -853,6 +867,14 @@
                   <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     <Icon name="infoCircle" size="xs" class="mr-1 inline" />
                     {{ oauthAuthCodeHint }}
+                  </p>
+                  <p
+                    v-if="platform === 'openai' && /^\d{6}$/.test(authCodeInput.trim())"
+                    class="mt-2 text-sm text-red-600 dark:text-red-400"
+                    role="alert"
+                    data-testid="openai-2fa-code-warning"
+                  >
+                    {{ t('admin.accounts.oauth.openai.twoFactorCodeWarning') }}
                   </p>
 
                   <!-- Gemini-specific state parameter warning -->

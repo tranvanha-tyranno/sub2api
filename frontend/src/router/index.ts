@@ -31,6 +31,12 @@ const routes: RouteRecordRaw[] = [
 
   // ==================== Public Routes ====================
   {
+    path: '/shop/:slug?',
+    name: 'Shop',
+    component: () => import('@/views/shop/ShopView.vue'),
+    meta: { requiresAuth: false, title: 'Cửa hàng API' }
+  },
+  {
     path: '/home',
     name: 'Home',
     component: () => import('@/views/HomeView.vue'),
@@ -189,7 +195,7 @@ const routes: RouteRecordRaw[] = [
   // ==================== User Routes ====================
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/shop'
   },
   {
     path: '/dashboard',
@@ -826,8 +832,7 @@ router.beforeEach(async (to, _from, next) => {
         next()
         return
       }
-      // Admin users go to admin dashboard, regular users go to user dashboard
-      next(authStore.isAdmin ? '/admin/dashboard' : '/dashboard')
+      next(authStore.isAdmin ? '/admin/dashboard' : '/shop')
       return
     }
     // Model Plaza:公开路由但受「启用开关 + 可选强制登录」双重控制(后端同口径 fail-closed)

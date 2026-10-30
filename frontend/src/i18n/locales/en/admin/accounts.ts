@@ -1268,9 +1268,11 @@ export default {
           followSteps: 'Follow these steps to complete OpenAI account authorization:',
           step1GenerateUrl: 'Click the button below to generate the authorization URL',
           generateAuthUrl: 'Generate Auth URL',
+          openAuthUrl: 'Open OpenAI sign-in',
           step2OpenUrl: 'Open the URL in your browser and complete authorization',
           openUrlDesc:
             'Open the authorization URL in a new tab, log in to your OpenAI account and authorize.',
+          twoFactorHint: 'If OpenAI asks for a 2FA code, enter it on the OpenAI sign-in page. Then approve access and return here.',
           importantNotice:
             'Important: The page may take a while to load after authorization. Please wait patiently. When the browser address bar changes to http://localhost..., the authorization is complete.',
           step3EnterCode: 'Enter Authorization URL or Code',
@@ -1280,7 +1282,8 @@ export default {
           authCodePlaceholder:
             'Option 1: Copy the complete URL\n(http://localhost:xxx/auth/callback?code=...)\nOption 2: Copy only the code parameter value',
           authCodeHint:
-            'You can copy the entire URL or just the code parameter value, the system will auto-detect',
+            'Paste the callback URL or its code parameter. This is not the 6-digit 2FA code.',
+          twoFactorCodeWarning: 'This looks like a 2FA code. Enter it on the OpenAI sign-in page, then paste the callback URL here.',
           failedToGenerateUrl: 'Failed to generate OpenAI auth URL',
           failedToExchangeCode: 'Failed to exchange OpenAI auth code',
           failedToValidateRT: 'Failed to validate refresh token',

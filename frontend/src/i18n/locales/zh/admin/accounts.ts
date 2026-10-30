@@ -1366,8 +1366,10 @@ export default {
           followSteps: '请按照以下步骤完成 OpenAI 账户的授权：',
           step1GenerateUrl: '点击下方按钮生成授权链接',
           generateAuthUrl: '生成授权链接',
+          openAuthUrl: '打开 OpenAI 登录页面',
           step2OpenUrl: '在浏览器中打开链接并完成授权',
           openUrlDesc: '请在新标签页中打开授权链接，登录您的 OpenAI 账户并授权。',
+          twoFactorHint: '如果 OpenAI 要求输入 2FA 验证码，请在 OpenAI 登录页面输入。完成授权后返回这里。',
           importantNotice:
             '重要提示：授权后页面可能会加载较长时间，请耐心等待。当浏览器地址栏变为 http://localhost... 开头时，表示授权已完成。',
           step3EnterCode: '输入授权链接或 Code',
@@ -1376,7 +1378,8 @@ export default {
           authCode: '授权链接或 Code',
           authCodePlaceholder:
             '方式1：复制完整的链接\n(http://localhost:xxx/auth/callback?code=...)\n方式2：仅复制 code 参数的值',
-          authCodeHint: '您可以直接复制整个链接或仅复制 code 参数值，系统会自动识别',
+          authCodeHint: '粘贴回调链接或其中的 code 参数，这不是 6 位 2FA 验证码。',
+          twoFactorCodeWarning: '这看起来是 2FA 验证码。请在 OpenAI 登录页面输入，然后将回调链接粘贴到这里。',
           failedToGenerateUrl: '生成 OpenAI 授权链接失败',
           failedToExchangeCode: 'OpenAI 授权码兑换失败',
           failedToValidateRT: '验证 Refresh Token 失败',

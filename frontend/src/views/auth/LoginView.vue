@@ -200,8 +200,8 @@
     <template v-if="!backendModeEnabled && publicSettingsLoaded && registrationEnabled" #footer>
       <p class="text-gray-500 dark:text-dark-400">
         {{ t('auth.dontHaveAccount') }}
-        <router-link
-          to="/register"
+          <router-link
+          :to="{ path: '/register', query: router.currentRoute.value.query.redirect ? { redirect: router.currentRoute.value.query.redirect } : {} }"
           class="font-medium text-primary-600 transition-colors hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
         >
           {{ t('auth.signUp') }}
@@ -260,6 +260,18 @@ const LOGIN_AGREEMENT_STORAGE_KEY = 'sub2api_login_agreement_consent'
 const router = useRouter()
 const authStore = useAuthStore()
 const appStore = useAppStore()
+
+function postLoginRedirect(): string {
+  const requested = router.currentRoute.value.query.redirect
+  const fallback = authStore.isAdmin ? '/admin/dashboard' : '/shop'
+  if (typeof requested !== 'string' || !requested.startsWith('/') || requested.startsWith('//')) {
+    return fallback
+  }
+  if (!authStore.isAdmin && (requested === '/admin' || requested.startsWith('/admin/'))) {
+    return '/shop'
+  }
+  return requested
+}
 
 // ==================== State ====================
 
@@ -602,9 +614,7 @@ async function handleLogin(): Promise<void> {
     clearAllAffiliateReferralCodes()
     appStore.showSuccess(t('auth.loginSuccess'))
 
-    // Redirect to dashboard or intended route
-    const redirectTo = (router.currentRoute.value.query.redirect as string) || '/dashboard'
-    await router.push(redirectTo)
+    await router.push(postLoginRedirect())
   } catch (error: unknown) {
     errorMessage.value = extractI18nErrorMessage(error, t, 'auth.errors', t('auth.loginFailed'))
 
@@ -644,8 +654,7 @@ async function handlePasskeyLogin(): Promise<void> {
     await authStore.loginWithPasskey(proof)
     clearAllAffiliateReferralCodes()
     appStore.showSuccess(t('auth.loginSuccess'))
-    const redirectTo = (router.currentRoute.value.query.redirect as string) || '/dashboard'
-    await router.push(redirectTo)
+    await router.push(postLoginRedirect())
   } catch (error: unknown) {
     const fallback = error instanceof DOMException && error.name === 'NotAllowedError'
       ? t('auth.passkeyCancelled')
@@ -713,8 +722,7 @@ async function handle2FAVerify(code: string): Promise<void> {
     appStore.showSuccess(t('auth.loginSuccess'))
 
     // Redirect to dashboard or intended route
-    const redirectTo = (router.currentRoute.value.query.redirect as string) || '/dashboard'
-    await router.push(redirectTo)
+    await router.push(postLoginRedirect())
   } catch (error: unknown) {
     const err = error as { message?: string; response?: { data?: { message?: string } } }
     const message = err.response?.data?.message || err.message || t('profile.totp.loginFailed')

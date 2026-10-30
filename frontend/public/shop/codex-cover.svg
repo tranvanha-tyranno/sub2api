@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" role="img" aria-label="API Codex">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#090d39"/><stop offset=".55" stop-color="#15105c"/><stop offset="1" stop-color="#070d2c"/></linearGradient>
+    <linearGradient id="type" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".5" stop-color="#c7d9ff"/><stop offset="1" stop-color="#4c86ff"/></linearGradient>
+    <linearGradient id="edge" x2="0" y2="1"><stop stop-color="#9e56ff"/><stop offset="1" stop-color="#247eff"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="9" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="grid" width="42" height="42" patternUnits="userSpaceOnUse"><path d="M42 0H0V42" fill="none" stroke="#4769d8" stroke-opacity=".16"/></pattern>
+  </defs>
+  <rect width="800" height="420" fill="url(#bg)"/>
+  <rect width="800" height="420" fill="url(#grid)"/>
+  <g stroke="#4a69f3" stroke-opacity=".34" fill="none">
+    <path d="M0 366 355 110M0 301 318 82M800 373 462 115M800 304 491 83" stroke-width="2"/>
+    <path d="M44 420 344 135M120 420 365 147M756 420 467 135M680 420 441 147"/>
+    <path d="M0 184 276 73M800 184 525 73" stroke-width="2"/>
+  </g>
+  <g transform="translate(68 118) rotate(-12)" fill="#101449" stroke="url(#edge)" stroke-width="2" filter="url(#glow)">
+    <rect width="190" height="136" rx="13"/><path d="M0 30h190" opacity=".55"/><path d="m22 57 18 14-18 14m37 1h36m-65 27h113" stroke="#78a7ff" stroke-width="5" fill="none"/><circle cx="18" cy="15" r="4" fill="#6b8cff"/><circle cx="34" cy="15" r="4" fill="#9d69ff"/>
+  </g>
+  <g transform="translate(590 116) rotate(12)" fill="#101449" stroke="url(#edge)" stroke-width="2" filter="url(#glow)">
+    <rect width="154" height="120" rx="13"/><path d="M0 28h154" opacity=".55"/><path d="m27 70 16-16m-16 16 16 16m84-32-16 16 16 16M88 48 70 94" stroke="#8db4ff" stroke-width="5" fill="none"/>
+  </g>
+  <g filter="url(#glow)">
+    <path d="M400 25 478 68v81l-78 43-78-43V68Z" fill="#21217c" stroke="#a081ff" stroke-width="5"/>
+    <path d="m365 103 24-20m-24 20 24 20m46-40-24 20 24 20m-17-55-35 70" fill="none" stroke="#d6e3ff" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" filter="url(#glow)">
+    <text x="400" y="307" font-size="132" letter-spacing="4" fill="url(#type)" stroke="#8cb9ff" stroke-width="1">API</text>
+    <text x="400" y="385" font-size="88" letter-spacing="2" fill="url(#type)" stroke="#7367ff" stroke-width="1">CODEX</text>
+  </g>
+</svg>

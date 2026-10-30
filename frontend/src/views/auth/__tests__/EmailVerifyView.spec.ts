@@ -800,7 +800,7 @@ describe('EmailVerifyView', () => {
     expect(showSuccessMock).not.toHaveBeenCalled()
   })
 
-  it('keeps the normal email registration flow unchanged', async () => {
+  it('registers with the verified email and returns to the shop', async () => {
     sessionStorage.setItem(
       'register_data',
       JSON.stringify({
@@ -839,7 +839,7 @@ describe('EmailVerifyView', () => {
       invitation_code: 'INVITE',
     })
     expect(apiClientPostMock).not.toHaveBeenCalled()
-    expect(pushMock).toHaveBeenCalledWith('/dashboard')
+    expect(pushMock).toHaveBeenCalledWith('/shop')
   })
 
   it('does not require another Tencent proof for final email registration', async () => {

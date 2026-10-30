@@ -176,7 +176,7 @@ describe('RegisterView', () => {
       promo_code: undefined,
       invitation_code: undefined
     })
-    expect(pushMock).toHaveBeenCalledWith('/dashboard')
+    expect(pushMock).toHaveBeenCalledWith('/shop')
   })
 
   it('requires matching confirmation before storing only the registration fields for email verification', async () => {
