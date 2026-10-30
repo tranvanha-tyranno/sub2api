@@ -1,5 +1,73 @@
 # Chạy bản Docker đã build sẵn
 
+## Tự động build trên GitHub (khuyến nghị)
+
+Workflow **Build Docker Web** (`.github/workflows/docker-web.yml`) build cả
+frontend Vue và backend Go vào cùng một image cho `linux/amd64` và `linux/arm64`.
+Workflow chạy khi push thay đổi ứng dụng lên `main`, hoặc chạy thủ công ở
+GitHub → Actions → Build Docker Web → Run workflow. Pull request chỉ kiểm tra
+build, không xuất bản image.
+
+Sau khi workflow thành công, image có tại:
+
+```text
+ghcr.io/tranvanha-tyranno/sub2api:main
+ghcr.io/tranvanha-tyranno/sub2api:sha-<40 ký tự commit SHA>
+```
+
+Tag `main` theo bản build mới nhất của nhánh main; tag `sha-...` dùng để chọn
+chính xác một commit hoặc quay lại bản cũ. Workflow Release hiện có vẫn quản
+lý riêng các tag phiên bản và `latest`.
+
+Workflow dùng `GITHUB_TOKEN` có sẵn, quyền `packages: write`, không cần secret
+Docker Hub. Với fork, bật Actions nếu GitHub chưa cho phép workflow chạy.
+Nếu publish báo lỗi quyền package đã tồn tại, vào package Settings → Manage
+Actions access và cấp quyền Write cho repository này.
+
+### Server đang chạy sẵn
+
+Vào đúng thư mục deploy đang chứa `.env` và file Compose của hệ thống hiện tại.
+Cập nhật file Compose tương ứng từ repo này, giữ nguyên `.env`, dữ liệu và
+project name (`-p`) / `--env-file` đang dùng. Ba file production
+`docker-compose.yml`, `docker-compose.local.yml`, `docker-compose.standalone.yml`
+đã trỏ đến image GHCR của fork, không có bước build.
+
+Thêm hoặc sửa đúng một dòng trong `.env`:
+
+```dotenv
+SUB2API_IMAGE=ghcr.io/tranvanha-tyranno/sub2api:main
+```
+
+Đợi workflow thành công rồi chạy (thay tên file nếu đang dùng bản khác):
+
+```sh
+docker compose -f docker-compose.local.yml pull sub2api
+docker compose -f docker-compose.local.yml up -d --no-build sub2api
+docker compose -f docker-compose.local.yml ps
+docker compose -f docker-compose.local.yml logs --tail=80 sub2api
+```
+
+Nếu chỉ muốn thay image trong file Compose tùy chỉnh đang có, đổi trường
+`services.sub2api.image` thành `${SUB2API_IMAGE:-ghcr.io/tranvanha-tyranno/sub2api:main}`
+rồi cũng dùng các lệnh trên. Không dùng `docker-compose.dev.yml` khi triển khai
+image có sẵn vì file đó dành cho build từ source.
+
+Nếu GHCR package đang private, đăng nhập trên server bằng GitHub username và
+PAT có quyền `read:packages` (nhập PAT ở lời nhắc password):
+
+```sh
+docker login ghcr.io -u tranvanha-tyranno
+```
+
+Hoặc chuyển package sang Public trong GitHub → Packages → sub2api → Package
+settings → Change visibility để server pull không cần đăng nhập.
+
+Triển khai mới: tải repo của fork, vào `deploy/`, sao chép `.env.example` thành
+`.env`, cấu hình mật khẩu PostgreSQL/JWT/TOTP và tài khoản admin như hướng dẫn
+trong README, rồi chạy `docker compose -f docker-compose.local.yml up -d --no-build`.
+
+## Cách thay thế: build tại máy phát triển và chuyển archive
+
 Quy trình này dành cho VPS Linux x86_64/amd64 đang chạy Sub2API bằng Docker
 Compose. Build image trên máy phát triển, tải image lên GitHub Releases, rồi
 tải image về VPS. VPS không cần cài Node.js hoặc Go và không chạy lại bước build.

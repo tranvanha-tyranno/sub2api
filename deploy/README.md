@@ -50,6 +50,12 @@ See [APPLE_CONTAINER.md](./APPLE_CONTAINER.md) for configuration, upgrades, pers
 
 ## Docker Deployment (Recommended)
 
+For this fork, GitHub Actions builds the web UI and API into
+`ghcr.io/tranvanha-tyranno/sub2api:main` on application pushes to `main`.
+The production Compose files use this image by default; servers only pull and
+run it. See [Vietnamese prebuilt deployment guide](./PREBUILT_VI.md) for setup,
+updates, private registry access, and pinned image tags.
+
 ### Method 1: One-Click Deployment (Recommended)
 
 Use the automated preparation script for the easiest setup:
